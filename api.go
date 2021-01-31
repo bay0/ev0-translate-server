@@ -56,7 +56,7 @@ func (a *App) serve() error {
 
 	r.Route("/api", func(r chi.Router) {
 		r.Route("/translate", func(r chi.Router) {
-			r.Get("/{targetLang}/{str}", a.generateTest)
+			r.Get("/{targetLang}/{str}", a.translate)
 		})
 	})
 
@@ -64,7 +64,7 @@ func (a *App) serve() error {
 	return http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("port")), r)
 }
 
-func (a *App) generateTest(w http.ResponseWriter, r *http.Request) {
+func (a *App) translate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
 	ctx := context.Background()
