@@ -27,3 +27,8 @@ jobs:
           v: true
           x: false
           ldflags: -s -w
+      - 
+        uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: build/
