@@ -1,8 +1,6 @@
 # ev0-translate-server
 
-API for the ev0 lua to translate messages.
-
-<div style="width:100%;height:0px;position:relative;padding-bottom:56.250%;"><iframe src="https://streamable.com/e/hlojer" frameborder="0" width="100%" height="100%" allowfullscreen style="width:100%;height:100%;position:absolute;left:0px;top:0px;overflow:hidden;"></iframe></div>
+API for the ev0 lua to translate messages. ([preview](https://streamable.com/e/hlojer))
 
 ## Build
 ```bash
