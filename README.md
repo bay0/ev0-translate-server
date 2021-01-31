@@ -15,6 +15,8 @@ Create the config.json
     "port": 8080
 }
 ```
+## Dependencies
+[Cloud Translation](https://cloud.google.com/translate)
 
 Lua to use with [ev0lve.xyz](https://ev0lve.xyz/)
 
