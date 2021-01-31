@@ -8,7 +8,7 @@ go build .
 ```
 
 ## Binaries
-Get binaries from the build server [![](https://github.com/bay0/ev0-translate-server/workflows/GitHub%20CI/badge.svg)](https://github.com/bay0/ev0-translate-server/actions).
+Get binaries from the build server [![](https://github.com/bay0/ev0-translate-server/workflows/build/badge.svg)](https://github.com/bay0/ev0-translate-server/actions).
 
 ## Usage
 Create the config.json
