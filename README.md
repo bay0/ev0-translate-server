@@ -8,11 +8,11 @@ go build .
 ```
 
 ## Usage
-Create the config.json
+Create the environment variables
 ```json
 {
-    "apiKey": "",
-    "port": 8080
+    APP_PORT= //port the api runs on e.x 8080
+    APP_GOOGLE_CLOUD_API_KEY= //google cloud api key e.x WojsIIWikm1mRPtQ5rSLmH5drgTvstgo5363FxK
 }
 ```
 ## Dependencies

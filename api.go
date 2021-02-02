@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"cloud.google.com/go/translate"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"golang.org/x/text/language"
 	"google.golang.org/api/option"
 
@@ -24,7 +24,7 @@ type App struct {
 func NewApp() App {
 	ctx := context.Background()
 
-	client, err := translate.NewClient(ctx, option.WithAPIKey(viper.GetString("apiKey")))
+	client, err := translate.NewClient(ctx, option.WithAPIKey("APP_GOOGLE_CLOUD_API_KEY"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -61,7 +61,7 @@ func (a *App) serve() error {
 	})
 
 	log.Println("Web server is available")
-	return http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("port")), r)
+	return http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("APP_PORT")), r)
 }
 
 func (a *App) translate(w http.ResponseWriter, r *http.Request) {
