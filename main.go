@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
@@ -12,6 +13,12 @@ func init() {
 	Formatter.ForceFormatting = true
 	Formatter.ForceColors = true
 	log.SetFormatter(Formatter)
+
+	errenv := godotenv.Load()
+	if errenv != nil {
+		log.Println("Error loading .env file")
+	}
+
 }
 
 func main() {

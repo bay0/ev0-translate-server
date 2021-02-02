@@ -17,6 +17,11 @@ import (
 	"github.com/go-chi/cors"
 )
 
+type User struct {
+	Username string `json:"username"`
+	APIKey   string `json:"apikey"`
+}
+
 type App struct {
 	client *translate.Client
 }
@@ -24,7 +29,7 @@ type App struct {
 func NewApp() App {
 	ctx := context.Background()
 
-	client, err := translate.NewClient(ctx, option.WithAPIKey("APP_GOOGLE_CLOUD_API_KEY"))
+	client, err := translate.NewClient(ctx, option.WithAPIKey(os.Getenv("APP_GOOGLE_CLOUD_API_KEY")))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,14 +54,15 @@ func (a *App) serve() error {
 	r.Use(cors.Handler(cors.Options{
 		// AllowedOrigins: []string{"https://foo.com"}, // Use this to allow specific origin hosts
 		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{"GET"},
+		AllowedMethods: []string{"GET", "POST"},
 		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		MaxAge:         300,
 	}))
 
 	r.Route("/api", func(r chi.Router) {
 		r.Route("/translate", func(r chi.Router) {
-			r.Get("/{targetLang}/{str}", a.translate)
+			//r.Get("/{targetLang}/{str}", a.translate)
+			r.Post("/{targetLang}/{str}", a.translateWithUserToken)
 		})
 	})
 
@@ -82,6 +88,46 @@ func (a *App) translate(w http.ResponseWriter, r *http.Request) {
 		sendErr(w, 500, err.Error())
 		return
 	}
+
+	w.WriteHeader(200)
+	w.Write([]byte(resp[0].Text))
+}
+
+func (a *App) translateWithUserToken(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+
+	ctx := context.Background()
+	targetLang := chi.URLParam(r, "targetLang")
+	str := chi.URLParam(r, "str")
+
+	err := r.ParseMultipartForm(4096)
+	if err != nil {
+		sendErr(w, http.StatusInternalServerError, err.Error())
+	}
+
+	user := User{
+		Username: r.FormValue("username"),
+		APIKey:   r.FormValue("apikey"),
+	}
+
+	userClient, err := translate.NewClient(ctx, option.WithAPIKey(user.APIKey))
+	if err != nil {
+		sendErr(w, 500, err.Error())
+	}
+
+	lang, err := language.Parse(targetLang)
+	if err != nil {
+		sendErr(w, 500, err.Error())
+		return
+	}
+
+	resp, err := userClient.Translate(ctx, []string{str}, lang, nil)
+	if err != nil {
+		sendErr(w, 500, err.Error())
+		return
+	}
+
+	userClient.Close()
 
 	w.WriteHeader(200)
 	w.Write([]byte(resp[0].Text))
