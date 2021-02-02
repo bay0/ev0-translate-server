@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/translate"
+	"github.com/gorilla/schema"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/text/language"
 	"google.golang.org/api/option"
@@ -16,6 +17,8 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 )
+
+var decoder = schema.NewDecoder()
 
 type User struct {
 	Username string `json:"username"`
@@ -100,15 +103,18 @@ func (a *App) translateWithUserToken(w http.ResponseWriter, r *http.Request) {
 	targetLang := chi.URLParam(r, "targetLang")
 	str := chi.URLParam(r, "str")
 
-	err := r.ParseMultipartForm(4096)
+	err := r.ParseForm()
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError, err.Error())
 	}
 
-	user := User{
-		Username: r.FormValue("username"),
-		APIKey:   r.FormValue("apikey"),
+	var user User
+	err = decoder.Decode(&user, r.PostForm)
+	if err != nil {
+		sendErr(w, http.StatusInternalServerError, err.Error())
 	}
+
+	log.Printf("User %s accessed api", user.Username)
 
 	userClient, err := translate.NewClient(ctx, option.WithAPIKey(user.APIKey))
 	if err != nil {
