@@ -23,7 +23,7 @@ function translate(message, postInChat, playerName)
 end
 
 function on_player_say(event)
-    if enable:get_value() then
+    if enable:get_value() and engine_client.is_ingame() then
         local input = event:get_string('text', "")
 
         local playerIndex = engine_client.get_player_for_userid(event:get_int('userid', 0))
